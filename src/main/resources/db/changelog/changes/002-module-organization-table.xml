@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-organization-table" author="inmaytide">
+        <createTable tableName="t_organization" remarks="组织结构表">
+            <column name="id" type="varchar(64)" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="varchar(64)" remarks="所属租户"/>
+            <column name="parent_id" type="varchar(64)" remarks="上级组织"/>
+            <column name="code" type="varchar(64)" remarks="组织编码"/>
+            <column name="name" type="varchar(64)" remarks="组织名称"/>
+            <column name="short_name" type="varchar(64)" remarks="组织简称"/>
+            <column name="type" type="int" remarks="组织类型"/>
+            <column name="status" type="int" remarks="状态"/>
+            <column name="cover" type="varchar(512)" remarks="鸟瞰图存储地址"/>
+            <column name="address" type="varchar(512)" remarks="组织地址"/>
+            <column name="description" type="varchar(512)" remarks="组织介绍"/>
+            <column name="path" type="varchar(512)" remarks="节点路径"/>
+            <column name="created_by" type="varchar(64)" remarks="创建人"/>
+            <column name="created_at" type="timestamp" defaultValueDate="now()" remarks="创建时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="varchar(64)" remarks="更新人"/>
+            <column name="updated_at" type="timestamp" defaultValueDate="now()" remarks="更新时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int" defaultValueNumeric="0" remarks="版本号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted" type="int" defaultValueNumeric="0" remarks="逻辑删除">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

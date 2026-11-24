@@ -1,0 +1,65 @@
+spring:
+  application:
+    name: iam
+  profiles:
+    active: dev
+  cloud:
+    compatibility-verifier:
+      enabled: false
+    nacos:
+      config:
+        server-addr: 192.168.26.160:30848
+        username: nacos
+        password: ${NACOS_PASSWORD:}
+        namespace: DEV_H160
+        file-extension: yml
+  config:
+    import:
+      - nacos:datasource.yml
+      - nacos:kafka.yml
+      - nacos:security.yml
+  datasource:
+    url: jdbc:mysql://${datasource.mysql.host}:${datasource.mysql.port}/${spring.application.name}?useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&createDatabaseIfNotExist=true
+    username: ${datasource.mysql.username}
+    password: ${datasource.mysql.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  liquibase:
+    enabled: true
+    change-log: classpath:db/changelog/db.changelog-master.yml
+  data:
+    redis:
+      host: ${datasource.redis.host}
+      port: ${datasource.redis.port}
+      password: ${datasource.redis.password}
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  type-aliases-package: com.inmaytide.orbit.iam.module.*.entity
+  global-config:
+    db-config:
+      logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+server:
+  port: 30702
+
+logging:
+  level:
+    ROOT: info
+    com.inmaytide.orbit: debug
