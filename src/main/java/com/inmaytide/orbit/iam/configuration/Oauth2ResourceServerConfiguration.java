@@ -5,11 +5,14 @@ import com.inmaytide.orbit.framework.security.SecurityProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
+@EnableMethodSecurity
 public class Oauth2ResourceServerConfiguration extends OAuth2ResourceServerConfigurationAdapter {
 
     private static final String[] OPENAPI_WHITELIST = {
@@ -19,8 +22,8 @@ public class Oauth2ResourceServerConfiguration extends OAuth2ResourceServerConfi
             "/actuator/health/**"
     };
 
-    public Oauth2ResourceServerConfiguration(SecurityProperties properties) {
-        super(properties);
+    public Oauth2ResourceServerConfiguration(SecurityProperties properties, ObjectMapper objectMapper) {
+        super(properties, objectMapper);
     }
 
     @Bean

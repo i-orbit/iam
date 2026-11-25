@@ -5,3 +5,5 @@ databaseChangeLog:
       file: db/changelog/changes/002-module-organization-table.xml
   - include:
       file: db/changelog/changes/003-module-role-table.xml
+  - include:
+      file: db/changelog/changes/004-module-tenant-table.xml

@@ -38,4 +38,15 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="002-add-organization-show-order" author="inmaytide">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="t_organization" columnName="show_order"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="t_organization">
+            <column name="show_order" type="int" remarks="排序字段"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

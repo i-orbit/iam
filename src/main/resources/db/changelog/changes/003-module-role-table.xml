@@ -66,4 +66,15 @@
         </createTable>
     </changeSet>
 
+    <changeSet id="002-add-role-show-order" author="inmaytide">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <columnExists tableName="t_role" columnName="show_order"/>
+            </not>
+        </preConditions>
+        <addColumn tableName="t_role">
+            <column name="show_order" type="int" remarks="排序字段"/>
+        </addColumn>
+    </changeSet>
+
 </databaseChangeLog>

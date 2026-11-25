@@ -32,6 +32,8 @@ public class Organization extends TombstoneEntity {
 
     private String description;      // 组织介绍
 
-    private String path;
+    private String path;             // 树节点路径
+
+    private String showOrder;        // 排序字段
 
 }

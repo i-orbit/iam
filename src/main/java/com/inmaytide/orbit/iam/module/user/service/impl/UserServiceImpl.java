@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.inmaytide.orbit.framework.clients.module.core.api.DictionaryService;
 import com.inmaytide.orbit.framework.core.domain.AuthenticatedUser;
 import com.inmaytide.orbit.framework.security.SecurityUtils;
+import com.inmaytide.orbit.iam.module.tenant.support.TenantScope;
 import com.inmaytide.orbit.iam.module.user.converter.UserConverter;
 import com.inmaytide.orbit.iam.module.user.domain.CreateOrUpdateUserRequest;
 import com.inmaytide.orbit.iam.module.user.domain.User;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.select(User::getId, valueColumn);
         wrapper.in(User::getId, ids);
+        TenantScope.applyTenantFilter(wrapper, User::getTenantId, null);
         return baseMapper.selectList(wrapper)
                 .stream()
                 .collect(Collectors.toMap(User::getId, valueColumn));
@@ -57,6 +59,7 @@ public class UserServiceImpl implements UserService {
         if (user == null) {
             throw new IllegalArgumentException("notfound user with id: " + id);
         }
+        TenantScope.checkOwnership(user.getTenantId());
         UserVO res = converter.toVO(user);
         Map<String, String> dictionaryShowValues = dictionaryService.findShowValueByIds(Arrays.asList(user.getGender(), user.getEmploymentStatus()));
         res.setGenderShowValue(dictionaryShowValues.get(user.getGender()));

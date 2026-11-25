@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        https://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="001-create-tenant-table" author="inmaytide" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+        <createTable tableName="t_tenant" remarks="租户表">
+            <column name="id" type="varchar(64)" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="code" type="varchar(64)" remarks="租户编码">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="varchar(128)" remarks="租户名称">
+                <constraints nullable="false"/>
+            </column>
+            <column name="status" type="int" defaultValueNumeric="1" remarks="状态(1启用/0禁用)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deployment_mode" type="varchar(32)" defaultValue="PRIVATE" remarks="部署模式(SAAS/PRIVATE)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="edition" type="varchar(32)" remarks="版本"/>
+            <column name="expired_at" type="timestamp" remarks="授权到期时间"/>
+            <column name="max_users" type="int" remarks="用户数上限"/>
+            <column name="max_online_users" type="int" remarks="在线数上限"/>
+            <column name="contact_name" type="varchar(64)" remarks="联系人"/>
+            <column name="contact_phone" type="varchar(32)" remarks="联系电话"/>
+            <column name="contact_email" type="varchar(128)" remarks="联系邮箱"/>
+            <column name="address" type="varchar(512)" remarks="地址"/>
+            <column name="description" type="varchar(512)" remarks="备注"/>
+            <column name="created_by" type="varchar(64)" remarks="创建人"/>
+            <column name="created_at" type="timestamp" defaultValueDate="now()" remarks="创建时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="varchar(64)" remarks="更新人"/>
+            <column name="updated_at" type="timestamp" defaultValueDate="now()" remarks="更新时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int" defaultValueNumeric="0" remarks="版本号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted" type="int" defaultValueNumeric="0" remarks="逻辑删除">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="002-add-tenant-indexes" author="inmaytide">
+        <addUniqueConstraint tableName="t_tenant" columnNames="code" constraintName="uk_tenant_code"/>
+        <createIndex tableName="t_tenant" indexName="idx_tenant_status">
+            <column name="status"/>
+        </createIndex>
+        <createIndex tableName="t_user" indexName="idx_user_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="t_role" indexName="idx_role_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="t_organization" indexName="idx_organization_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet id="003-create-tenant-module-table" author="inmaytide" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+        <createTable tableName="t_tenant_module" remarks="租户模块授权">
+            <column name="id" type="varchar(64)" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="varchar(64)" remarks="租户ID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="module_code" type="varchar(64)" remarks="模块编码">
+                <constraints nullable="false"/>
+            </column>
+            <column name="enabled" type="int" defaultValueNumeric="1" remarks="是否启用(1启用/0禁用)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_by" type="varchar(64)" remarks="创建人"/>
+            <column name="created_at" type="timestamp" defaultValueDate="now()" remarks="创建时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="varchar(64)" remarks="更新人"/>
+            <column name="updated_at" type="timestamp" defaultValueDate="now()" remarks="更新时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int" defaultValueNumeric="0" remarks="版本号">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="t_tenant_module" columnNames="tenant_id, module_code" constraintName="uk_tenant_module"/>
+    </changeSet>
+
+    <changeSet id="004-create-tenant-order-table" author="inmaytide" objectQuotingStrategy="QUOTE_ONLY_RESERVED_WORDS">
+        <createTable tableName="t_tenant_order" remarks="租户订单">
+            <column name="id" type="varchar(64)" remarks="主键">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tenant_id" type="varchar(64)" remarks="租户ID">
+                <constraints nullable="false"/>
+            </column>
+            <column name="order_no" type="varchar(64)" remarks="订单编号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="contract_no" type="varchar(64)" remarks="采购合同编号"/>
+            <column name="contract_name" type="varchar(256)" remarks="采购合同名称"/>
+            <column name="contract_amount" type="decimal(18,2)" remarks="合同金额"/>
+            <column name="currency" type="varchar(16)" defaultValue="CNY" remarks="币种"/>
+            <column name="order_type" type="varchar(32)" remarks="订单类型(NEW/RENEW/UPGRADE)"/>
+            <column name="status" type="varchar(32)" remarks="订单状态(PENDING/PAID/CANCELLED/REFUNDED)"/>
+            <column name="signed_at" type="timestamp" remarks="合同签订时间"/>
+            <column name="start_at" type="timestamp" remarks="服务开始时间"/>
+            <column name="end_at" type="timestamp" remarks="服务结束时间"/>
+            <column name="paid_at" type="timestamp" remarks="支付时间"/>
+            <column name="payment_method" type="varchar(32)" remarks="支付方式"/>
+            <column name="contract_url" type="varchar(512)" remarks="合同附件地址"/>
+            <column name="remark" type="varchar(512)" remarks="备注"/>
+            <column name="created_by" type="varchar(64)" remarks="创建人"/>
+            <column name="created_at" type="timestamp" defaultValueDate="now()" remarks="创建时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updated_by" type="varchar(64)" remarks="更新人"/>
+            <column name="updated_at" type="timestamp" defaultValueDate="now()" remarks="更新时间">
+                <constraints nullable="false"/>
+            </column>
+            <column name="version" type="int" defaultValueNumeric="0" remarks="版本号">
+                <constraints nullable="false"/>
+            </column>
+            <column name="deleted" type="int" defaultValueNumeric="0" remarks="逻辑删除">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addUniqueConstraint tableName="t_tenant_order" columnNames="order_no" constraintName="uk_tenant_order_no"/>
+        <createIndex tableName="t_tenant_order" indexName="idx_tenant_order_tenant_id">
+            <column name="tenant_id"/>
+        </createIndex>
+        <createIndex tableName="t_tenant_order" indexName="idx_tenant_order_contract_no">
+            <column name="contract_no"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>
