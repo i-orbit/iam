@@ -54,7 +54,7 @@
         <insert tableName="t_user">
             <column name="id" value="9999"/>
             <column name="username" value="admin"/>
-            <column name="password" value="$2b$10$Tk3AUXgJNZmTClCewJBEneh.ujR0xJwGYBXJYcAsg0Timsjo/Zbki"/>
+            <column name="password" value="$2a$10$yDUwjNAHOD3.i4cP42adbeSBOhGhBuxhdTDps683mC59OSGqR8P0G"/>
             <column name="name" value="系统管理员"/>
             <column name="status" value="2"/>
             <column name="employment_status" value="ACTIVE"/>
@@ -68,6 +68,7 @@
             <column name="user_id" type="varchar(64)" remarks="用户ID"/>
             <column name="organization_id" type="varchar(64)" remarks="组织ID"/>
             <column name="defaulted" type="int" remarks="是否是默认组织"/>
+            <column name="show_order" type="int" remarks="用户在组织内的排序"/>
         </createTable>
         <addPrimaryKey tableName="t_user_organization" columnNames="user_id, organization_id"/>
         <createTable tableName="t_user_position" remarks="用户岗位表">
