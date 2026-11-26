@@ -11,7 +11,7 @@ import java.util.List;
  * @since 2026/11/25
  */
 @Data
-@Schema(description = "设置租户模块请求实体")
+@Schema(name = "设置租户模块请求实体")
 public class UpdateTenantModulesRequest {
 
     @NotNull

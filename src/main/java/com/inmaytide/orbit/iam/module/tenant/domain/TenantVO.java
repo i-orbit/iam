@@ -10,7 +10,7 @@ import java.time.Instant;
  * @since 2026/11/25
  */
 @Data
-@Schema(description = "租户信息VO")
+@Schema(name = "租户信息VO")
 public class TenantVO {
 
     @Schema(description = "主键标识")

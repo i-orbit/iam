@@ -11,7 +11,7 @@ import lombok.Data;
  * @since 2026/11/25
  */
 @Data
-@Schema(description = "修改租户状态请求实体")
+@Schema(name = "修改租户状态请求实体")
 public class UpdateTenantStatusRequest {
 
     @NotNull

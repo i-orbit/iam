@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2026/7/7
  */
 @Data
-@Schema(description = "用户信息VO")
+@Schema(name = "用户信息VO")
 public class UserVO {
 
     @Schema(description = "所属租户ID")

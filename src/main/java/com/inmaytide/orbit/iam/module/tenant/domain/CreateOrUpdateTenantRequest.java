@@ -14,7 +14,7 @@ import java.time.Instant;
  * @since 2026/11/25
  */
 @Data
-@Schema(description = "创建/修改租户请求实体")
+@Schema(name = "创建/修改租户请求实体")
 public class CreateOrUpdateTenantRequest {
 
     @Schema(description = "主键标识")

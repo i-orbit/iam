@@ -13,7 +13,7 @@ import java.util.List;
  * @since 2026/7/7
  */
 @Data
-@Schema(description = "创建/修改用户信息请求实体")
+@Schema(name = "创建/修改用户信息请求实体")
 public class CreateOrUpdateUserRequest {
 
     @Schema(description = "主键标识")
