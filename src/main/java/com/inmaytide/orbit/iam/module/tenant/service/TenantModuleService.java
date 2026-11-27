@@ -1,6 +1,8 @@
 package com.inmaytide.orbit.iam.module.tenant.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.inmaytide.orbit.framework.core.exception.ProblemDetailsException;
+import com.inmaytide.orbit.iam.constants.IamErrorCode;
 import com.inmaytide.orbit.iam.module.tenant.domain.TenantModule;
 import com.inmaytide.orbit.iam.module.tenant.repository.TenantModuleRepository;
 import com.inmaytide.orbit.iam.module.tenant.repository.TenantRepository;
@@ -53,7 +55,8 @@ public class TenantModuleService {
             throw new IllegalArgumentException("租户ID不能为空");
         }
         if (tenantRepository.selectById(tenantId) == null) {
-            throw new IllegalArgumentException("租户不存在: " + tenantId);
+            throw new ProblemDetailsException(IamErrorCode.TENANT_NOT_FOUND,
+                    "租户不存在: " + tenantId);
         }
         repository.delete(Wrappers.<TenantModule>lambdaQuery().eq(TenantModule::getTenantId, tenantId));
         if (moduleCodes == null || moduleCodes.isEmpty()) {

@@ -4,7 +4,10 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.inmaytide.orbit.framework.core.domain.dto.PageResult;
+import com.inmaytide.orbit.framework.core.exception.CommonErrorCode;
+import com.inmaytide.orbit.framework.core.exception.ProblemDetailsException;
 import com.inmaytide.orbit.framework.security.SecurityUtils;
+import com.inmaytide.orbit.iam.constants.IamErrorCode;
 import com.inmaytide.orbit.iam.module.tenant.converter.TenantConverter;
 import com.inmaytide.orbit.iam.module.tenant.domain.CreateOrUpdateTenantRequest;
 import com.inmaytide.orbit.iam.module.tenant.domain.DeploymentMode;
@@ -83,7 +86,8 @@ public class TenantServiceImpl implements TenantService {
     public TenantVO update(CreateOrUpdateTenantRequest request) {
         Tenant existing = repository.selectById(request.getId());
         if (existing == null) {
-            throw new IllegalArgumentException("租户不存在: " + request.getId());
+            throw new ProblemDetailsException(IamErrorCode.TENANT_NOT_FOUND,
+                    "租户不存在: " + request.getId());
         }
         validate(request, request.getId());
         Tenant tenant = converter.toEntity(request);
@@ -92,7 +96,7 @@ public class TenantServiceImpl implements TenantService {
         tenant.setVersion(existing.getVersion());
         try {
             if (repository.updateById(tenant) == 0) {
-                throw new IllegalStateException("租户信息已被修改, 请刷新后重试");
+                throw new ProblemDetailsException(CommonErrorCode.CONFLICT, "租户信息已被修改, 请刷新后重试");
             }
         } catch (DuplicateKeyException e) {
             throw new IllegalArgumentException("租户编码已存在: " + tenant.getCode());
@@ -108,11 +112,11 @@ public class TenantServiceImpl implements TenantService {
         }
         Tenant existing = repository.selectById(id);
         if (existing == null) {
-            throw new IllegalArgumentException("租户不存在: " + id);
+            throw new ProblemDetailsException(IamErrorCode.TENANT_NOT_FOUND, "租户不存在: " + id);
         }
         existing.setStatus(status);
         if (repository.updateById(existing) == 0) {
-            throw new IllegalStateException("租户信息已被修改, 请刷新后重试");
+            throw new ProblemDetailsException(CommonErrorCode.CONFLICT, "租户信息已被修改, 请刷新后重试");
         }
         return converter.toVO(repository.selectById(id));
     }

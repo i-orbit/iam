@@ -1,11 +1,12 @@
 package com.inmaytide.orbit.iam.module.tenant.controller;
 
 import com.inmaytide.orbit.framework.core.domain.dto.PageResult;
-import com.inmaytide.orbit.framework.core.domain.dto.ResponseWrapper;
 import com.inmaytide.orbit.framework.core.domain.group.Update;
+import com.inmaytide.orbit.framework.core.exception.ProblemDetailsException;
 import com.inmaytide.orbit.framework.log.OperationType;
 import com.inmaytide.orbit.framework.log.annotation.OperationLog;
 import com.inmaytide.orbit.framework.security.SecurityUtils;
+import com.inmaytide.orbit.iam.constants.IamErrorCode;
 import com.inmaytide.orbit.iam.module.tenant.domain.CreateOrUpdateTenantOrderRequest;
 import com.inmaytide.orbit.iam.module.tenant.domain.TenantOrderQuery;
 import com.inmaytide.orbit.iam.module.tenant.domain.TenantOrderVO;
@@ -34,17 +35,17 @@ public class TenantOrderController {
     @GetMapping
     @Operation(summary = "分页查询租户订单")
     @OperationLog(operationType = OperationType.QUERY, resourceType = TenantOrderService.RESOURCE_TYPE)
-    public ResponseWrapper<PageResult<TenantOrderVO>> pagination(@ModelAttribute TenantOrderQuery query) {
-        return ResponseWrapper.success(service.pagination(query));
+    public PageResult<TenantOrderVO> pagination(@ModelAttribute TenantOrderQuery query) {
+        return service.pagination(query);
     }
 
     @GetMapping("{id}")
     @Operation(summary = "查询指定租户订单")
     @OperationLog(operationType = OperationType.QUERY, resourceType = TenantOrderService.RESOURCE_TYPE)
-    public ResponseWrapper<TenantOrderVO> get(@PathVariable String id) {
+    public TenantOrderVO get(@PathVariable String id) {
         return service.get(id)
-                .map(ResponseWrapper::success)
-                .orElseGet(() -> ResponseWrapper.failure(404, "tenant_order_not_found",
+                .orElseThrow(() -> new ProblemDetailsException(
+                        IamErrorCode.TENANT_ORDER_NOT_FOUND,
                         "未找到ID为[%s]的租户订单".formatted(id)));
     }
 
@@ -52,17 +53,17 @@ public class TenantOrderController {
     @Operation(summary = "创建租户订单")
     @OperationLog(operationType = OperationType.CREATE, resourceType = TenantOrderService.RESOURCE_TYPE)
     @PreAuthorize(PLATFORM_OPERATOR_PERMISSION)
-    public ResponseWrapper<TenantOrderVO> create(@RequestBody @Validated CreateOrUpdateTenantOrderRequest request) {
-        return ResponseWrapper.success(service.create(request));
+    public TenantOrderVO create(@RequestBody @Validated CreateOrUpdateTenantOrderRequest request) {
+        return service.create(request);
     }
 
     @PutMapping
     @Operation(summary = "修改租户订单")
     @OperationLog(operationType = OperationType.UPDATE, resourceType = TenantOrderService.RESOURCE_TYPE)
     @PreAuthorize(PLATFORM_OPERATOR_PERMISSION)
-    public ResponseWrapper<TenantOrderVO> update(
+    public TenantOrderVO update(
             @RequestBody @Validated(Update.class) CreateOrUpdateTenantOrderRequest request) {
-        return ResponseWrapper.success(service.update(request));
+        return service.update(request);
     }
 
 }

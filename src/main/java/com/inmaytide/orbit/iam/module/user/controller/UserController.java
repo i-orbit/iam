@@ -4,7 +4,6 @@ import com.inmaytide.orbit.framework.core.domain.AuthenticatedUser;
 import com.inmaytide.orbit.framework.core.domain.dto.AffectedResult;
 import com.inmaytide.orbit.framework.core.domain.dto.BatchIdsRequest;
 import com.inmaytide.orbit.framework.core.domain.dto.PageResult;
-import com.inmaytide.orbit.framework.core.domain.dto.ResponseWrapper;
 import com.inmaytide.orbit.framework.core.domain.group.Update;
 import com.inmaytide.orbit.framework.core.utils.MoreStrings;
 import com.inmaytide.orbit.iam.module.user.domain.CreateOrUpdateUserRequest;
@@ -36,50 +35,50 @@ public class UserController {
 
     @GetMapping("{id}")
     @Operation(summary = "查询指定用户的详细信息")
-    public ResponseWrapper<UserVO> get(@PathVariable String id) {
-        return ResponseWrapper.success(userService.get(id));
+    public UserVO get(@PathVariable String id) {
+        return userService.get(id);
     }
 
     @GetMapping
     @Operation(summary = "分页查询用户信息列表")
-    public ResponseWrapper<PageResult<UserVO>> list(@ModelAttribute UserQuery query) {
+    public PageResult<UserVO> list(@ModelAttribute UserQuery query) {
         return null;
     }
 
     @DeleteMapping("{id}")
     @Operation(summary = "删除指定用户信息")
-    public ResponseWrapper<AffectedResult> deleteById(@RequestParam String id) {
+    public AffectedResult deleteById(@RequestParam String id) {
         return null;
     }
 
     @DeleteMapping
     @Operation(summary = "批量删除指定用户信息")
-    public ResponseWrapper<AffectedResult> deleteByIds(@RequestBody BatchIdsRequest request) {
+    public AffectedResult deleteByIds(@RequestBody BatchIdsRequest request) {
         return null;
     }
 
     @PostMapping
     @Operation(summary = "创建用户信息")
-    public ResponseWrapper<UserVO> create(@RequestBody @Validated CreateOrUpdateUserRequest request) {
+    public UserVO create(@RequestBody @Validated CreateOrUpdateUserRequest request) {
         return null;
     }
 
     @PutMapping
     @Operation(summary = "修改用户信息")
-    public ResponseWrapper<UserVO> update(@RequestBody @Validated(Update.class) CreateOrUpdateUserRequest request) {
+    public UserVO update(@RequestBody @Validated(Update.class) CreateOrUpdateUserRequest request) {
         return null;
     }
 
     @GetMapping("/names")
     @Operation(summary = "批量查询指定用户的姓名")
-    public ResponseWrapper<Map<String, String>> findNamesByIds(@RequestParam String ids) {
-        return ResponseWrapper.success(userService.findFieldValues(MoreStrings.splitByCommas(ids), User::getName));
+    public Map<String, String> findNamesByIds(@RequestParam String ids) {
+        return userService.findFieldValues(MoreStrings.splitByCommas(ids), User::getName);
     }
 
     @GetMapping("/current")
     @Operation(summary = "获取当前请求认证信息关联的用户详细信息")
-    public ResponseWrapper<AuthenticatedUser> getCurrentAuthenticatedUser() {
-        return ResponseWrapper.success(userService.getCurrentAuthenticatedUser().orElse(null));
+    public AuthenticatedUser getCurrentAuthenticatedUser() {
+        return userService.getCurrentAuthenticatedUser().orElse(null);
     }
 
 }

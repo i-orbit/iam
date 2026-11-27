@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.support.SFunction;
 import com.inmaytide.orbit.framework.clients.module.core.api.DictionaryService;
 import com.inmaytide.orbit.framework.core.domain.AuthenticatedUser;
+import com.inmaytide.orbit.framework.core.exception.ProblemDetailsException;
 import com.inmaytide.orbit.framework.security.SecurityUtils;
+import com.inmaytide.orbit.iam.constants.IamErrorCode;
 import com.inmaytide.orbit.iam.module.tenant.support.TenantScope;
 import com.inmaytide.orbit.iam.module.user.converter.UserConverter;
 import com.inmaytide.orbit.iam.module.user.domain.CreateOrUpdateUserRequest;
@@ -57,7 +59,8 @@ public class UserServiceImpl implements UserService {
     public UserVO get(String id) {
         User user = baseMapper.selectById(id);
         if (user == null) {
-            throw new IllegalArgumentException("notfound user with id: " + id);
+            throw new ProblemDetailsException(IamErrorCode.USER_NOT_FOUND,
+                    "未找到ID为[%s]的用户信息".formatted(id));
         }
         TenantScope.checkOwnership(user.getTenantId());
         UserVO res = converter.toVO(user);

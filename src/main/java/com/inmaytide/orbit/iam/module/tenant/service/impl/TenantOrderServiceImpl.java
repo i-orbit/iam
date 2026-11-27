@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.inmaytide.orbit.framework.core.domain.dto.PageResult;
+import com.inmaytide.orbit.framework.core.exception.CommonErrorCode;
+import com.inmaytide.orbit.framework.core.exception.ProblemDetailsException;
+import com.inmaytide.orbit.iam.constants.IamErrorCode;
 import com.inmaytide.orbit.iam.module.tenant.converter.TenantOrderConverter;
 import com.inmaytide.orbit.iam.module.tenant.domain.CreateOrUpdateTenantOrderRequest;
 import com.inmaytide.orbit.iam.module.tenant.domain.TenantOrder;
@@ -92,7 +95,8 @@ public class TenantOrderServiceImpl implements TenantOrderService {
     public TenantOrderVO update(CreateOrUpdateTenantOrderRequest request) {
         TenantOrder existing = repository.selectById(request.getId());
         if (existing == null) {
-            throw new IllegalArgumentException("租户订单不存在: " + request.getId());
+            throw new ProblemDetailsException(IamErrorCode.TENANT_ORDER_NOT_FOUND,
+                    "租户订单不存在: " + request.getId());
         }
         TenantScope.checkOwnership(existing.getTenantId());
         if (!Objects.equals(existing.getTenantId(), request.getTenantId())) {
@@ -108,7 +112,7 @@ public class TenantOrderServiceImpl implements TenantOrderService {
         order.setVersion(existing.getVersion());
         try {
             if (repository.updateById(order) == 0) {
-                throw new IllegalStateException("租户订单已被修改, 请刷新后重试");
+                throw new ProblemDetailsException(CommonErrorCode.CONFLICT, "租户订单已被修改, 请刷新后重试");
             }
         } catch (DuplicateKeyException e) {
             throw new IllegalArgumentException("订单编号已存在: " + order.getOrderNo());
@@ -121,7 +125,8 @@ public class TenantOrderServiceImpl implements TenantOrderService {
             throw new IllegalArgumentException("租户ID不能为空");
         }
         if (tenantRepository.selectById(request.getTenantId()) == null) {
-            throw new IllegalArgumentException("租户不存在: " + request.getTenantId());
+            throw new ProblemDetailsException(IamErrorCode.TENANT_NOT_FOUND,
+                    "租户不存在: " + request.getTenantId());
         }
         if (StringUtils.isBlank(request.getOrderNo())) {
             throw new IllegalArgumentException("订单编号不能为空");
